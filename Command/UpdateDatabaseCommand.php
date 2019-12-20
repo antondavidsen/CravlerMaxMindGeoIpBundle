@@ -42,6 +42,7 @@ class UpdateDatabaseCommand extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        $returnCode = 0;
         $config = $this->config;
 
         foreach ($config['source'] as $key => $source) {
@@ -56,6 +57,8 @@ class UpdateDatabaseCommand extends Command
             if (false === $tmpFile) {
                 $output->writeln('FAILED');
                 $output->writeln(sprintf('<error>Error during file download occurred on %s</error>', $source));
+                $returnCode = 1;
+
                 continue;
             }
 
@@ -79,6 +82,8 @@ class UpdateDatabaseCommand extends Command
                 $output->writeln('<info>Done</info>');
             } else {
                 $output->writeln(sprintf('<error>An error occured when decompressing %s</error>', basename($tmpFile)));
+                $returnCode = 1;
+
                 continue;
             }
 
@@ -91,10 +96,12 @@ class UpdateDatabaseCommand extends Command
                     if (!$expectedMD5 || strlen($expectedMD5) !== 32) {
                         unlink($tmpFileUnzipped);
                         $output->writeln(sprintf('<error>Unable to check MD5 for %s</error>', $source));
+                        $returnCode = 1;
                         continue;
                     } elseif ($expectedMD5 !== $calculatedMD5) {
                         unlink($tmpFileUnzipped);
                         $output->writeln(sprintf('<error>MD5 for %s does not match</error>', $source));
+                        $returnCode = 1;
                         continue;
                     } else {
                         $output->writeln('<info>File hash OK.</info>');
@@ -119,6 +126,8 @@ class UpdateDatabaseCommand extends Command
             }
         }
         $output->writeln('');
+
+        return $returnCode;
     }
 
     /**

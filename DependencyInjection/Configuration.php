@@ -21,9 +21,11 @@ class Configuration implements ConfigurationInterface
 
         if (method_exists($treeBuilder, 'getRootNode')) {
             $rootNode = $treeBuilder->getRootNode();
+            $defaultPathValue = '%kernel.project_dir%/config/app/MaxMind';
         } else {
             // BC layer for symfony/config 4.1 and older
             $rootNode = $treeBuilder->root('cravler_max_mind_geo_ip');
+            $defaultPathValue = '%kernel.root_dir%/Resources/MaxMind';
         }
 
         $rootNode
@@ -43,7 +45,7 @@ class Configuration implements ConfigurationInterface
                     ->end()
                 ->end()
                 ->scalarNode('path')
-                    ->defaultValue('%kernel.root_dir%/Resources/MaxMind')
+                    ->defaultValue($defaultPathValue)
                 ->end()
                 ->arrayNode('db')
                     ->addDefaultsIfNotSet()
@@ -86,13 +88,13 @@ class Configuration implements ConfigurationInterface
                     ->addDefaultsIfNotSet()
                     ->children()
                         ->scalarNode('country')
-                            ->defaultValue('https://geolite.maxmind.com/download/geoip/database/GeoLite2-Country.tar.gz')
+                            ->defaultValue(null)
                         ->end()
                         ->scalarNode('city')
-                            ->defaultValue('https://geolite.maxmind.com/download/geoip/database/GeoLite2-City.tar.gz')
+                            ->defaultValue(null)
                         ->end()
                         ->scalarNode('asn')
-                            ->defaultValue('https://geolite.maxmind.com/download/geoip/database/GeoLite2-ASN.tar.gz')
+                            ->defaultValue(null)
                         ->end()
                         ->scalarNode('connection_type')
                             ->defaultValue(null)
@@ -115,13 +117,13 @@ class Configuration implements ConfigurationInterface
                     ->addDefaultsIfNotSet()
                     ->children()
                         ->scalarNode('country')
-                            ->defaultValue('https://geolite.maxmind.com/download/geoip/database/GeoLite2-Country.tar.gz.md5')
+                            ->defaultValue(null)
                         ->end()
                         ->scalarNode('city')
-                            ->defaultValue('https://geolite.maxmind.com/download/geoip/database/GeoLite2-City.tar.gz.md5')
+                            ->defaultValue(null)
                         ->end()
                         ->scalarNode('asn')
-                            ->defaultValue('https://geolite.maxmind.com/download/geoip/database/GeoLite2-ASN.tar.gz.md5')
+                            ->defaultValue(null)
                         ->end()
                         ->scalarNode('connection_type')
                             ->defaultValue(null)
